@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "ACE editor for sources.d.n",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "In-browser editing of Debian sources, yay!",
   "author": "Raphael Geissert",
   "content_scripts": [
