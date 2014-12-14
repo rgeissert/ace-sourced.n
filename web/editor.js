@@ -16,18 +16,10 @@ function getCellForLine(line) {
     return document.getElementsByClassName("ace_gutter-cell")[line-1];
 }
 
-function highlightSourceCode() {
-    var ct = document.getElementById('codetable');
-    var sc = document.getElementById('sourcecode');
-
-    var cmirror_elem = document.createElement('div');
-
-    // grab the code before getCode/setCode change to using
-    // editor:
-    var sourceCode = getCode();
+function getMode() {
     var mode = document.getElementById('sourcecode').className.split(/\s+/)[0];
 
-    mode_conversion={
+    var mode_conversion = {
 	'cpp': 'c_cpp',
 	'bash': 'sh',
 	'go': 'golang',
@@ -40,6 +32,151 @@ function highlightSourceCode() {
 
     if (mode_conversion[mode] !== undefined)
 	mode = mode_conversion[mode];
+
+    // let's try to do better than debsources \o/
+    if (mode == 'no-highlight') {
+	var filext_modes = {
+	    'abap': 'abap',
+	    'actionscript': 'actionscript',
+	    'ada': 'ada',
+	    'apache_conf': 'apache_conf',
+	    'applescript': 'applescript',
+	    'asciidoc': 'asciidoc',
+	    'assembly_x86': 'assembly_x86',
+	    'autohotkey': 'autohotkey',
+	    'batchfile': 'batchfile',
+	    'c9search': 'c9search',
+	    'c_cpp': 'c_cpp',
+	    'cirru': 'cirru',
+	    'clojure': 'clojure',
+	    'cobol': 'cobol',
+	    'coffee': 'coffee',
+	    'coldfusion': 'coldfusion',
+	    'csharp': 'csharp',
+	    'css': 'css',
+	    'curly': 'curly',
+	    'd': 'd',
+	    'dart': 'dart',
+	    'diff': 'diff',
+	    'django': 'django',
+	    'dockerfile': 'dockerfile',
+	    'dot': 'dot',
+	    'eiffel': 'eiffel',
+	    'ejs': 'ejs',
+	    'elixir': 'elixir',
+	    'elm': 'elm',
+	    'erlang': 'erlang',
+	    'forth': 'forth',
+	    'ftl': 'ftl',
+	    'gcode': 'gcode',
+	    'gherkin': 'gherkin',
+	    'gitignore': 'gitignore',
+	    'glsl': 'glsl',
+	    'golang': 'golang',
+	    'groovy': 'groovy',
+	    'haml': 'haml',
+	    'handlebars': 'handlebars',
+	    'haskell': 'haskell',
+	    'haxe': 'haxe',
+	    'html': 'html',
+	    'html_ruby': 'html_ruby',
+	    'ini': 'ini',
+	    'io': 'io',
+	    'jack': 'jack',
+	    'jade': 'jade',
+	    'java': 'java',
+	    'javascript': 'javascript',
+	    'json': 'json',
+	    'jsoniq': 'jsoniq',
+	    'jsp': 'jsp',
+	    'jsx': 'jsx',
+	    'julia': 'julia',
+	    'latex': 'latex',
+	    'less': 'less',
+	    'liquid': 'liquid',
+	    'lisp': 'lisp',
+	    'livescript': 'livescript',
+	    'logiql': 'logiql',
+	    'lsl': 'lsl',
+	    'lua': 'lua',
+	    'luapage': 'luapage',
+	    'lucene': 'lucene',
+	    'makefile': 'makefile',
+	    'markdown': 'markdown',
+	    'matlab': 'matlab',
+	    'mel': 'mel',
+	    'mushcode': 'mushcode',
+	    'mysql': 'mysql',
+	    'nix': 'nix',
+	    'objectivec': 'objectivec',
+	    'ocaml': 'ocaml',
+	    'pascal': 'pascal',
+	    'perl': 'perl',
+	    'pgsql': 'pgsql',
+	    'php': 'php',
+	    'plain_text': 'plain_text',
+	    'powershell': 'powershell',
+	    'praat': 'praat',
+	    'prolog': 'prolog',
+	    'properties': 'properties',
+	    'protobuf': 'protobuf',
+	    'python': 'python',
+	    'r': 'r',
+	    'rdoc': 'rdoc',
+	    'rhtml': 'rhtml',
+	    'ruby': 'ruby',
+	    'rust': 'rust',
+	    'sass': 'sass',
+	    'scad': 'scad',
+	    'scala': 'scala',
+	    'scheme': 'scheme',
+	    'scss': 'scss',
+	    'sh': 'sh',
+	    'sjs': 'sjs',
+	    'smarty': 'smarty',
+	    'snippets': 'snippets',
+	    'soy_template': 'soy_template',
+	    'space': 'space',
+	    'sql': 'sql',
+	    'stylus': 'stylus',
+	    'svg': 'svg',
+	    'tcl': 'tcl',
+	    'tex': 'tex',
+	    'text': 'text',
+	    'textile': 'textile',
+	    'toml': 'toml',
+	    'twig': 'twig',
+	    'typescript': 'typescript',
+	    'vala': 'vala',
+	    'vbscript': 'vbscript',
+	    'velocity': 'velocity',
+	    'verilog': 'verilog',
+	    'vhdl': 'vhdl',
+	    'xml': 'xml',
+	    'xquery': 'xquery',
+	    'yaml': 'yaml',
+	    };
+	var filext, fp_comps;
+	fp_comps = getFilePath().split(/\./);
+	filext = fp_comps.pop();
+
+	if (filext_modes[filext] !== undefined)
+	    mode = filext_modes[filext];
+    }
+
+    return mode;
+}
+
+function highlightSourceCode() {
+    var ct = document.getElementById('codetable');
+    var sc = document.getElementById('sourcecode');
+
+    var cmirror_elem = document.createElement('div');
+
+    // grab the code before getCode/setCode change to using
+    // editor:
+    var sourceCode = getCode();
+    var mode = getMode();
 
     cmirror_elem.textContent = sourceCode;
     cmirror_elem.id = 'code_editor';
