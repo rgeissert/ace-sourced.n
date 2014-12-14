@@ -39,6 +39,7 @@ function getMode() {
 	    'abap': 'abap',
 	    'actionscript': 'actionscript',
 	    'ada': 'ada',
+	    'am': 'makefile',
 	    'apache_conf': 'apache_conf',
 	    'applescript': 'applescript',
 	    'asciidoc': 'asciidoc',
