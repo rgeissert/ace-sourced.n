@@ -25,7 +25,7 @@ function highlightSourceCode() {
     // grab the code before getCode/setCode change to using
     // editor:
     var sourceCode = getCode();
-    var mode = document.getElementById('sourcecode').className;
+    var mode = document.getElementById('sourcecode').className.split(/\s+/)[0];
 
     if (mode == 'cpp') {
 	mode = 'c_cpp';
@@ -38,7 +38,8 @@ function highlightSourceCode() {
 
     editor = ace.edit(cmirror_elem);
 
-    editor.getSession().setMode("ace/mode/"+mode);
+    if (mode != 'no-highlight')
+	editor.getSession().setMode("ace/mode/"+mode);
     editor.setTheme('ace/theme/dreamweaver');
     editor.setOption('maxLines', Infinity);
     editor.setOption('vScrollBarAlwaysVisible', false);
