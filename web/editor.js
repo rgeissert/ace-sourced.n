@@ -27,11 +27,19 @@ function highlightSourceCode() {
     var sourceCode = getCode();
     var mode = document.getElementById('sourcecode').className.split(/\s+/)[0];
 
-    if (mode == 'cpp') {
-	mode = 'c_cpp';
-    } else if (mode == 'bash') {
-	mode = 'sh';
+    mode_conversion={
+	'cpp': 'c_cpp',
+	'bash': 'sh',
+	'go': 'golang',
+	'coffeescript': 'coffee',
+	'cs': 'csharp',
+	'apache': 'apache_conf',
+	// yeah, debsources maps 'make' to cmake
+	'cmake': 'makefile',
     }
+
+    if (mode_conversion[mode] !== undefined)
+	mode = mode_conversion[mode];
 
     cmirror_elem.textContent = sourceCode;
     cmirror_elem.id = 'code_editor';
