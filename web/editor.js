@@ -287,6 +287,7 @@ function editcode() {
 
     var editlink = document.getElementById('editcode_trigger');
     editlink.textContent = 'save as patch';
+    editlink.href = '#';
     editlink.onclick = downloadPatch;
 
     if (document.getElementById('email_trigger') == null) {
