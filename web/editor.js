@@ -201,6 +201,13 @@ function highlightSourceCode() {
     message_style.innerHTML = '.message { position: absolute; right: 2em; z-index: 5; background-color: #feff6f; padding: 10px; margin-right: 10px; margin-left: 10px; white-space: pre-wrap; /*other browsers */ white-space: -moz-pre-wrap; white-space:-o-pre-wrap; word-wrap: break-word; }';
     document.body.appendChild(message_style);
 
+    // set an absolute position of the infobox and bring it back to the
+    // front by bumping its zIndex
+    var pkginfobox_style = document.createElement('style');
+    pkginfobox_style.type = 'text/css';
+    pkginfobox_style.innerHTML = '.pkginfobox_fixed { position: absolute; z-index: 1;}';
+    document.body.appendChild(pkginfobox_style);
+
     var page_params = document.location.search;
     var matches = page_params.match(/[?&]msg=(\d+):([^:]+):([^&]+)/g);
     for (var i = 0; matches != null && i < matches.length; i++) {
