@@ -232,3 +232,5 @@ function downloadCode() {
 function openPayload(payload) {
     window.location = payload;
 }
+
+highlightSourceCode();

@@ -37,9 +37,8 @@ function inject() {
 
 	    editlink = document.createElement('a');
 	    editlink.textContent = 'edit';
-	    editlink.onclick = editcode;
 	    editlink.id = 'editcode_trigger';
-	    editlink.href = '#';
+	    editlink.href = 'javascript:editcode();';
 	    downloadlink.parentElement.insertBefore(editlink, downloadlink.nextElementSibling);
 	    
 	    separator = document.createElement('span');
@@ -47,8 +46,6 @@ function inject() {
 	    editlink.parentElement.insertBefore(separator, editlink.nextElementSibling);
 	}
     }
-
-    highlightSourceCode();
 }
 
 inject();
