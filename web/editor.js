@@ -126,6 +126,7 @@ function getMode() {
 	    'rdoc': 'rdoc',
 	    'rhtml': 'rhtml',
 	    'ruby': 'ruby',
+	    'rules': 'makefile',
 	    'rust': 'rust',
 	    'sass': 'sass',
 	    'scad': 'scad',
