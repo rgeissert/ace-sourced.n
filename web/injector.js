@@ -33,21 +33,21 @@ function acedebsources_inject() {
 
     var a_elems = mtable.getElementsByTagName('a');
 
-    var editlink, separator, downloadlink;
+    var editlink, separator, parentfolderlink;
 
     for (var i = 0; i < a_elems.length; i++) {
-	if (a_elems[i].innerText == 'download') {
-	    downloadlink = a_elems[i];
+	if (a_elems[i].innerText == 'parent folder') {
+	    parentfolderlink = a_elems[i];
+
+	    separator = document.createElement('span');
+	    separator.textContent = ' | ';
+	    parentfolderlink.parentElement.insertBefore(separator, parentfolderlink.nextElementSibling);
 
 	    editlink = document.createElement('a');
 	    editlink.textContent = 'edit';
 	    editlink.id = 'editcode_trigger';
 	    editlink.href = 'javascript:editcode();';
-	    downloadlink.parentElement.insertBefore(editlink, downloadlink.nextElementSibling);
-	    
-	    separator = document.createElement('span');
-	    separator.textContent = ' | ';
-	    editlink.parentElement.insertBefore(separator, editlink.nextElementSibling);
+	    parentfolderlink.parentElement.insertBefore(editlink, parentfolderlink.nextElementSibling);
 	}
     }
 }

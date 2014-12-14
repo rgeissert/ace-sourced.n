@@ -299,7 +299,7 @@ function editcode() {
 
 	separator = document.createElement('span');
 	separator.textContent = ' | ';
-	editlink.parentElement.insertBefore(separator, email.nextElementSibling);
+	editlink.parentElement.insertBefore(separator, editlink.nextElementSibling);
 
 	// patch the download link to make it download the modified file
 	var dl_el = email.nextElementSibling;
