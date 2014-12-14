@@ -156,9 +156,8 @@ function getMode() {
 	    'xquery': 'xquery',
 	    'yaml': 'yaml',
 	    };
-	var filext, fp_comps;
-	fp_comps = getFilePath().split(/\./);
-	filext = fp_comps.pop();
+	var filext;
+	filext = getFilePath().split(/\//).pop().split(/\./).pop().toLowerCase();
 
 	if (filext_modes[filext] !== undefined)
 	    mode = filext_modes[filext];
