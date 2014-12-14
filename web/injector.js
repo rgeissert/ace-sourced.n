@@ -1,3 +1,4 @@
+base = 'https://people.debian.org/~geissert/ace-debsources/';
 
 insertjs = document.createElement('script');
 insertjs.type = 'text/javascript';
@@ -14,7 +15,7 @@ document.body.appendChild(insertjs);
 	insertjs = document.createElement('script');
 	insertjs.type = 'text/javascript';
 	insertjs.async = false;
-	insertjs.src = js;
+	insertjs.src = base+js;
 	document.body.appendChild(insertjs);
     }
 );
