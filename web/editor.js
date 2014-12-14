@@ -154,6 +154,7 @@ function getMode() {
 	    'vhdl': 'vhdl',
 	    'xml': 'xml',
 	    'xquery': 'xquery',
+	    'yml': 'yaml',
 	    'yaml': 'yaml',
 	    };
 	var filext;
