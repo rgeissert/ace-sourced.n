@@ -1,28 +1,32 @@
-base = 'https://people.debian.org/~geissert/ace-debsources/';
-
-insertjs = document.createElement('script');
-insertjs.type = 'text/javascript';
-// needed, as ace won't know where to download its stuff from
-insertjs.attributes['data-ace-base'] = 'https://cdn.jsdelivr.net/ace/1.1.8/min/';
-insertjs.async = false;
-insertjs.src = insertjs.attributes['data-ace-base'] + 'ace.js';
-document.body.appendChild(insertjs);
-
-[
-    '/diff.js',
-    '/editor.js'
-].forEach(function(js) {
-	insertjs = document.createElement('script');
-	insertjs.type = 'text/javascript';
-	insertjs.async = false;
-	insertjs.src = base+js;
-	document.body.appendChild(insertjs);
-    }
-);
 
 window.haschange = undefined;
 
-function inject() {
+function acedebsources_inject() {
+    // load the additional scripts:
+
+    var base = 'https://people.debian.org/~geissert/ace-debsources/';
+
+    var insertjs = document.createElement('script');
+    insertjs.type = 'text/javascript';
+    // needed, as ace won't know where to download its stuff from
+    insertjs.attributes['data-ace-base'] = 'https://cdn.jsdelivr.net/ace/1.1.8/min/';
+    insertjs.async = false;
+    insertjs.src = insertjs.attributes['data-ace-base'] + 'ace.js';
+    document.body.appendChild(insertjs);
+
+    [
+	'/diff.js',
+	'/editor.js'
+    ].forEach(function(js) {
+	    insertjs = document.createElement('script');
+	    insertjs.type = 'text/javascript';
+	    insertjs.async = false;
+	    insertjs.src = base+js;
+	    document.body.appendChild(insertjs);
+	}
+    );
+
+    // only actually inject if the page is actually for a file
     var mtable = document.getElementById('file_metadata');
     if (mtable == null)
 	return;
@@ -48,4 +52,4 @@ function inject() {
     }
 }
 
-inject();
+acedebsources_inject();
