@@ -119,7 +119,7 @@ function getMode() {
 	    'praat': 'praat',
 	    'prolog': 'prolog',
 	    'properties': 'properties',
-	    'protobuf': 'protobuf',
+	    'proto': 'protobuf',
 	    'python': 'python',
 	    'r': 'r',
 	    'rdoc': 'rdoc',
