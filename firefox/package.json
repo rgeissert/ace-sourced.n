@@ -1,0 +1,9 @@
+{
+  "name": "ace-sourced_n",
+  "title": "ACE editor for sources.d.n",
+  "id": "jid1-7XXcASw2cOyYxg",
+  "description": "In-browser editing of Debian sources, yay!",
+  "author": "",
+  "license": "MPL 2.0",
+  "version": "0.0.4"
+}
