@@ -36,7 +36,7 @@ function acedebsources_inject() {
     var editlink, separator, parentfolderlink;
 
     for (var i = 0; i < a_elems.length; i++) {
-	if (a_elems[i].innerText == 'parent folder') {
+	if (a_elems[i].textContent == 'parent folder') {
 	    parentfolderlink = a_elems[i];
 
 	    separator = document.createElement('span');
