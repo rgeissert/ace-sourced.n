@@ -47,6 +47,9 @@ function acedebsources_inject() {
 	    editlink.textContent = 'edit';
 	    editlink.id = 'editcode_trigger';
 	    editlink.href = 'javascript:editcode();';
+	    editlink.onclick = function() {
+		    editcode();
+	    };
 	    parentfolderlink.parentElement.insertBefore(editlink, parentfolderlink.nextElementSibling);
 	}
     }
