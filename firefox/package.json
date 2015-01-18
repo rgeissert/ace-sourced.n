@@ -1,9 +1,8 @@
 {
   "name": "ace-sourced_n",
   "title": "ACE editor for sources.d.n",
-  "id": "jid1-7XXcASw2cOyYxg",
+  "id": "acesourced@geissert.debian.org",
   "description": "In-browser editing of Debian sources, yay!",
-  "author": "",
-  "license": "MPL 2.0",
+  "author": "Raphael Geissert",
   "version": "0.0.4"
 }
