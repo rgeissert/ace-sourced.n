@@ -260,7 +260,11 @@ function highlightSourceCode() {
 
 	var cell = getCellForLine(line);
 	if (cell != undefined) {
-	    cell.scrollIntoViewIfNeeded();
+	    if (cell.scrollIntoViewIfNeeded != undefined) {
+		cell.scrollIntoViewIfNeeded();
+	    } else {
+		cell.scrollIntoView();
+	    }
 	}
     }
 }
