@@ -6,7 +6,7 @@
   "author": "Raphael Geissert",
   "content_scripts": [
     {
-	"matches": ["http://sources.debian.net/src/*"],
+	"matches": ["*://sources.debian.net/src/*"],
 	"js": [
 	    "loader.js"
 	    ]
