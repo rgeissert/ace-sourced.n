@@ -204,10 +204,18 @@ var JsDiff = (function() {
       var oldRangeStart = 0, newRangeStart = 0, curRange = [],
           oldLine = 1, newLine = 1;
       for (var i = 0; i < diff.length; i++) {
-        var current = diff[i],
-            lines = current.lines || current.value.replace(/\n$/, "").split("\n");
-        current.lines = lines;
+        var current = diff[i];
 
+        if (current.added && diff[i+1]) {
+          var next = diff[i+1];
+          if (next.removed) {
+            diff[i+1] = current;
+            diff[i] = current = next;
+          }
+        }
+
+        var lines = current.lines || current.value.replace(/\n$/, "").split("\n");
+        current.lines = lines;
         if (current.added || current.removed) {
           if (!oldRangeStart) {
             var prev = diff[i-1];
