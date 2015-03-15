@@ -213,8 +213,8 @@ function highlightSourceCode() {
     for (var i = 0; matches != null && i < matches.length; i++) {
 	var match = matches[i].match(/[?&]msg=(\d+):([^:]+):([^&]+)/);
 	var line = Number(match[1]);
-	var title = match[2];
-	var message = match[3];
+	var title = decodeURIComponent(match[2]);
+	var message = decodeURIComponent(match[3]);
 
 	var cell = getCellForLine(line);
 	var topOff = getAbsoluteTopOffset(cell);
