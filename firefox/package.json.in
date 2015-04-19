@@ -4,5 +4,6 @@
   "id": "acesourced@geissert.debian.org",
   "description": "In-browser editing of Debian sources, yay!",
   "author": "Raphael Geissert",
-  "version": "@VERSION@"
+  "version": "@VERSION@",
+  "permissions": {"private-browsing": true}
 }
