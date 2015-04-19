@@ -309,6 +309,7 @@ function editcode() {
     editlink.textContent = 'save as patch';
     editlink.href = '#';
     editlink.onclick = downloadPatch;
+    editlink.download = getFilePath() + '.patch';
 
     if (document.getElementById('email_trigger') == null) {
 	email = document.createElement('a');
@@ -331,6 +332,7 @@ function editcode() {
 	    dl_el.href = '#';
 	    dl_el.onclick = downloadCode;
 	    dl_el.textContent = 'download edit';
+	    dl_el.download = getFilePath().split(/\//).pop();
 	}
     }
 
@@ -377,24 +379,24 @@ function emailPatch() {
     return false;
 }
 
-function downloadPatch() {
+function downloadPatch(e) {
     var patch = generatePatch();
     var payload;
 
     payload = 'data:application/octet-stream,' + encodeURIComponent(patch);
 
-    openPayload(payload);
-    return false;
+    e.currentTarget.href = payload;
+    return true;
 }
 
-function downloadCode() {
+function downloadCode(e) {
     var code = getCode();
     var payload;
 
     payload = 'data:application/octet-stream,' + encodeURIComponent(code);
 
-    openPayload(payload);
-    return false;
+    e.currentTarget.href = payload;
+    return true;
 }
 
 function openPayload(payload) {
