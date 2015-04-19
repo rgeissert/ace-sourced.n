@@ -271,7 +271,16 @@ function highlightSourceCode() {
 
 function getCode() {
     if (editor == undefined) {
-	return document.getElementById('sourcecode').textContent;
+	var sc = document.getElementById('sourcecode');
+	var messages = sc.getElementByClassName("messages");
+
+	// get rid off the messages (annotations), which are added
+	// within the code
+	for (var i = 0; i < messages.length; i++) {
+	    messages[i].parentNode.removeChild(messages[i]);
+	}
+
+	return sc.textContent;
     } else {
 	return editor.getValue();
     }
