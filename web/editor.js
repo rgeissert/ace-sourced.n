@@ -272,7 +272,7 @@ function highlightSourceCode() {
 function getCode() {
     if (editor == undefined) {
 	var sc = document.getElementById('sourcecode');
-	var messages = sc.getElementsByClassName("messages");
+	var messages = sc.getElementsByClassName('messages');
 
 	// get rid off the messages (annotations), which are added
 	// within the code
