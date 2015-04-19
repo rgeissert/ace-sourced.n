@@ -1,5 +1,5 @@
 
-VERSION = 0.0.9
+VERSION = 0.0.10
 BASE_URL = https://people.debian.org/~geissert/ace-debsources
 SUBDIRS = chrome firefox web
 
