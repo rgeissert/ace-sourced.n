@@ -5,7 +5,7 @@ manifest.json: manifest.json.in
 	sed 's/@VERSION@/$(VERSION)/g;s,@BASE_URL@,$(BASE_URL),g' < $< > $@
 
 clean:
-	$(RM) manifest.json loader.js ../web/chrome.crx
+	$(RM) manifest.json loader.js ../web/latest.crx
 
 all: loader.js manifest.json
 	/usr/lib/chromium/chromium --no-message-box \
