@@ -19,6 +19,6 @@ $(VERSION)/build-stamp:
 
 clean:
 	$(RM) updates.xml
-	[ -d "$(VERSION)" ] && $(RM) -r $(VERSION)
+	! [ -d "$(VERSION)" ] || $(RM) -r $(VERSION)
 
 all: updates.xml $(VERSION)/build-stamp
