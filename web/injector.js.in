@@ -4,7 +4,7 @@ window.haschange = undefined;
 function acedebsources_inject() {
     // load the additional scripts:
 
-    var base = 'https://people.debian.org/~geissert/ace-debsources/';
+    var base = 'https://people.debian.org/~geissert/ace-debsources/@VERSION@/';
 
     var insertjs = document.createElement('script');
     insertjs.type = 'text/javascript';
