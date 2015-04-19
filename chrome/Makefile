@@ -1,8 +1,8 @@
 
 loader.js: loader.js.in
-	sed s/@VERSION@/$(VERSION)/g < $< > $@
+	sed 's/@VERSION@/$(VERSION)/g;s,@BASE_URL@,$(BASE_URL),g' < $< > $@
 manifest.json: manifest.json.in
-	sed s/@VERSION@/$(VERSION)/g < $< > $@
+	sed 's/@VERSION@/$(VERSION)/g;s,@BASE_URL@,$(BASE_URL),g' < $< > $@
 
 clean:
 	$(RM) manifest.json loader.js ../web/chrome.crx

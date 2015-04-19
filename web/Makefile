@@ -2,10 +2,10 @@
 FINAL_JS = diff.js editor.js injector.js
 
 updates.xml: updates.xml.in
-	sed s/@VERSION@/$(VERSION)/g < $< > $@
+	sed 's/@VERSION@/$(VERSION)/g;s,@BASE_URL@,$(BASE_URL),g' < $< > $@
 
 $(VERSION)/injector.js: injector.js.in
-	sed s/@VERSION@/$(VERSION)/g < $< > $@
+	sed 's/@VERSION@/$(VERSION)/g;s,@BASE_URL@,$(BASE_URL),g' < $< > $@
 
 $(VERSION)/%.js: %.js
 	cp -a $< $@

@@ -12,5 +12,5 @@
 	    ]
     }
   ],
-  "update_url": "https://people.debian.org/~geissert/ace-debsources/updates.xml"
+  "update_url": "@BASE_URL@/updates.xml"
 }

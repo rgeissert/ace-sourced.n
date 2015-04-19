@@ -1,12 +1,10 @@
 NAME = ace-sourced_n
-BASE_URL = https://people.debian.org/~geissert/ace-debsources/
-
 
 data/loader.js: data/loader.js.in
-	sed s/@VERSION@/$(VERSION)/g < $< > $@
+	sed 's/@VERSION@/$(VERSION)/g;s,@BASE_URL@,$(BASE_URL),g' < $< > $@
 
 package.json: package.json.in
-	sed s/@VERSION@/$(VERSION)/g < $< > $@
+	sed 's/@VERSION@/$(VERSION)/g;s,@BASE_URL@,$(BASE_URL),g' < $< > $@
 
 clean:
 	$(RM) package.json data/loader.js

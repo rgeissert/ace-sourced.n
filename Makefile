@@ -1,8 +1,9 @@
 
 VERSION = 0.0.5
+BASE_URL = https://people.debian.org/~geissert/ace-debsources
 SUBDIRS = chrome firefox web
 
-export VERSION
+export VERSION BASE_URL
 ACTION = all
 
 doall:

@@ -1,4 +1,4 @@
-base = 'https://people.debian.org/~geissert/ace-debsources/@VERSION@/';
+base = '@BASE_URL@/@VERSION@/';
 
 insertjs = document.createElement('script');
 insertjs.type = 'text/javascript';
