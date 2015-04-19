@@ -11,4 +11,4 @@ all: loader.js manifest.json
 	/usr/lib/chromium/chromium --no-message-box \
 	    --pack-extension=$(CURDIR) \
 	    --pack-extension-key=$(CHROME_PEM)
-	mv ../chrome.crx ../web/
+	mv ../chrome.crx ../web/latest.crx
