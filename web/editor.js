@@ -277,7 +277,7 @@ function getCode() {
 	// get rid off the messages (annotations), which are added
 	// within the code
 	while (messages.length > 0) {
-	    var m = messages.pop();
+	    var m = messages[0];
 	    m.parentNode.removeChild(m);
 	}
 
