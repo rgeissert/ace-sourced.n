@@ -1,9 +1,6 @@
 
 FINAL_JS = diff.js editor.js injector.js
 
-updates.xml: updates.xml.in
-	sed 's/@VERSION@/$(VERSION)/g;s,@BASE_URL@,$(BASE_URL),g' < $< > $@
-
 $(VERSION)/injector.js: injector.js.in
 	sed 's/@VERSION@/$(VERSION)/g;s,@BASE_URL@,$(BASE_URL),g' < $< > $@
 
@@ -18,7 +15,6 @@ $(VERSION)/build-stamp:
 	touch $@
 
 clean:
-	$(RM) updates.xml
 	! [ -d "$(VERSION)" ] || $(RM) -r $(VERSION)
 
-all: updates.xml $(VERSION)/build-stamp
+all: $(VERSION)/build-stamp
