@@ -267,6 +267,17 @@ function highlightSourceCode() {
 	    }
 	}
     }
+
+    var ibox = document.getElementById('infobox_content');
+    var overs = document.createElement('div');
+    var overs_a = document.createElement('a');
+
+    overs_a.textContent = 'Other versions';
+    overs_a.href = '#';
+    overs_a.onclick = fetchOtherVersions;
+    overs.id = 'overs';
+    overs.appendChild(overs_a);
+    ibox.appendChild(overs);
 }
 
 function getCode() {
@@ -345,6 +356,11 @@ function getFilePath() {
     return filepath.replace(/ \/ /g, '/').replace(/^source\//, '').replace('/', '-');
 }
 
+function getUnversionedFilePath() {
+    var filepath = getFilePath();
+    return filepath.replace(/^[^/]+\//, '');
+}
+
 function getSourceName() {
     var name = document.getElementById('breadcrumbs').textContent;
     return name.replace(/ \/ /g, '/').split(/\//)[1];
@@ -402,6 +418,106 @@ function downloadCode(e) {
 
 function openPayload(payload) {
     window.location = payload;
+}
+
+function diffOtherPath(otherPath, raw_url, cb) {
+    var req = new XMLHttpRequest();
+    req.onload = function() {
+	var otherCode = this.responseText;
+	var filepath = getFilePath();
+	var patch;
+
+	if (JsDiff.createTwoFilesPatch != undefined) {
+	    patch = JsDiff.createPatch(otherPath, filepath, otherCode, getCode(), undefined, undefined);
+	} else {
+	    patch = JsDiff.createPatch(filepath, otherCode, getCode(), undefined, undefined);
+	}
+
+	cb(patch);
+    }
+    req.onerror = function() {
+	window.alert("meh, we failed to download the other file");
+    }
+
+    req.open('GET', raw_url, true);
+    req.responseType = 'text';
+    req.send();
+}
+
+function checkIfSourceFileExists(file, cb) {
+    var req = new XMLHttpRequest();
+
+    req.onload = function() {
+	var res = req.response;
+	if (res.type != undefined && res.type == 'file')
+	    cb(true, res);
+	else
+	    cb(false);
+    }
+    req.onerror = function() {
+	window.alert('gah, we failed to query the debsources API');
+    }
+    req.open('GET', '/api/src/' + file + '/');
+    req.responseType = 'json';
+    req.send();
+}
+
+function fillOtherVersions() {
+    var overs = document.getElementById('overs');
+    var res = this.response;
+    var list = document.createElement('ul');
+    var label = document.createElement('span');
+    var ourVersion = getSourceVersion();
+
+    label.textContent = overs.textContent;
+
+    for (var n in res.versions) {
+	var ver = res.versions[n];
+
+	if (ver.version == ourVersion)
+	    continue;
+
+	var item = document.createElement('li');
+	var otherFile = getSourceName() + '/' + ver.version + '/' + getUnversionedFilePath();
+	item.textContent = ver.version;
+	var cb = function genCallback(_item, _version, _otherFile) {
+		return function(exists, _res) {
+		    if (exists) {
+			_item.innerHTML = '';
+			var link = document.createElement('a');
+
+			link.textContent = _version;
+			link.href = '#';
+			link.onclick = function() {
+			    diffOtherPath(_otherFile, _res.raw_url, window.alert);
+			    return false;
+			}
+			_item.appendChild(link);
+		    } else {
+			_item.style.textDecoration = 'line-through';
+			_item.style.fontSize = 'smaller';
+			_item.title = 'The file does not exist in version ' + _version;
+		    }
+	    };
+	}(item, ver.version, otherFile);
+	checkIfSourceFileExists(otherFile, cb);
+	list.appendChild(item);
+    }
+    overs.innerHTML = '';
+    overs.appendChild(label);
+    overs.appendChild(list);
+}
+
+function fetchOtherVersions() {
+    var req = new XMLHttpRequest();
+
+    req.onload = fillOtherVersions;
+    req.onerror = function() {
+	window.alert('gah, we failed to query the debsources API');
+    }
+    req.open('GET', '/api/src/' + getSourceName() + '/');
+    req.responseType = 'json';
+    req.send();
 }
 
 highlightSourceCode();
