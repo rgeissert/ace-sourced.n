@@ -492,7 +492,8 @@ function fillOtherVersions() {
 	    continue;
 
 	var item = document.createElement('li');
-	var otherFile = getSourceName() + '/' + ver.version + '/' + getUnversionedFilePath();
+	var otherFileAPI  = getSourceName() + '/' + ver.version + '/' + getUnversionedFilePath();
+	var otherFileFancy = getSourceName() + '-' + ver.version + '/' + getUnversionedFilePath();
 	item.textContent = ver.version;
 	var cb = function genCallback(_item, _version, _otherFile) {
 		return function(exists, _res) {
@@ -513,8 +514,8 @@ function fillOtherVersions() {
 			_item.title = 'The file does not exist in version ' + _version;
 		    }
 	    };
-	}(item, ver.version, otherFile);
-	checkIfSourceFileExists(otherFile, cb);
+	}(item, ver.version, otherFileFancy);
+	checkIfSourceFileExists(otherFileAPI, cb);
 	list.appendChild(item);
     }
     overs.innerHTML = '';
