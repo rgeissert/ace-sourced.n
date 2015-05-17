@@ -593,16 +593,19 @@ EditorTabsManager = {
     oncloseTab: function(t, e) {
 	var tabs = EditorTabsManager.tabs;
 	var li = e.currentTarget.parentElement;
+	var jumpTo = 0;
 
 	li.parentElement.removeChild(li);
 
 	for (var i = 0; i < tabs.length; i++) {
 	    if (t == tabs[i]) {
 		tabs.splice(i, 1);
+		if (i != 0)
+		    jumpTo = i-1;
 	    }
 	}
 
-	EditorTabsManager.selectSession(tabs[0].session);
+	EditorTabsManager.selectSession(tabs[jumpTo].session);
 	return false;
     },
     selectSession: function(session) {
