@@ -278,6 +278,11 @@ function highlightSourceCode() {
     overs.id = 'overs';
     overs.appendChild(overs_a);
     ibox.appendChild(overs);
+
+    var etabs = document.createElement('ul');
+    etabs.id = 'edittabs';
+
+    ibox.parentElement.parentElement.insertBefore(etabs, ibox.parentElement);
 }
 
 function getCode() {
@@ -445,8 +450,12 @@ function diffOtherPath(otherPath, raw_url, cb) {
 }
 
 function openDiffDocument(diff) {
+    if (EditorTabsManager.init())
+	EditorTabsManager.createTab(editor.getSession(), 'File');
+
     var diff_session = ace.createEditSession(diff, 'ace/mode/diff');
-    editor.setSession(diff_session);
+    EditorTabsManager.createTab(diff_session, 'Diff');
+    EditorTabsManager.selectSession(diff_session);
 }
 
 function queryJSONApi(path, cb) {
@@ -520,6 +529,72 @@ function fillOtherVersions() {
 
 function fetchOtherVersions() {
     queryJSONApi('src/' + getSourceName() + '/', fillOtherVersions);
+}
+
+EditorTabsManager = {
+    tabs: new Array(),
+    createTab: function(session, label = '') {
+	var li = document.createElement('li');
+	var a = document.createElement('a');
+	var t = {
+	    label: label,
+	    session: session,
+	    a: a,
+	};
+
+	a.textContent = label;
+	a.href = '#';
+	a.onclick = function(e) {
+	    return EditorTabsManager.onclickHandler(t, e);
+	}
+	li.appendChild(a);
+
+	var etab = document.getElementById('edittabs');
+	etab.appendChild(li);
+
+	EditorTabsManager.tabs.push(t);
+	if (EditorTabsManager.tabs.length == 1) {
+	    a.className = 'etab_selected';
+	    a.blur();
+	}
+    },
+    onclickHandler : function(t, e) {
+	var tabs = EditorTabsManager.tabs;
+	for (var i = 0; i < tabs.length; i++) {
+	    if (e.currentTarget == tabs[i].a) {
+		tabs[i].a.className = 'etab_selected';
+		tabs[i].a.blur();
+	    } else {
+		tabs[i].a.className = '';
+	    }
+	}
+	editor.setSession(t.session);
+	return false;
+    },
+    selectSession: function(session) {
+	var tabs = EditorTabsManager.tabs;
+	for (var i = 0; i < tabs.length; i++) {
+	    if (session == tabs[i].session) {
+		tabs[i].a.className = 'etab_selected';
+		tabs[i].a.blur();
+	    } else {
+		tabs[i].a.className = '';
+	    }
+	}
+	editor.setSession(session);
+	return session;
+    },
+    init: function() {
+	if (EditorTabsManager.initialised != undefined)
+	    return false;
+
+	var style = document.createElement('style');
+	style.type = 'text/css';
+	style.innerHTML = 'ul#edittabs { list-style-type: none; margin: 30px 0 0 0; padding: 0 0 0.3em 0; } ul#edittabs li { display: inline; } ul#edittabs li a { color: black; font-size: smaller; background-color: whitesmoke; border: 1px solid #c9c3ba; border-bottom: none; padding: 0.3em; text-decoration: none; -moz-user-select: none; -webkit-user-select: none; -ms-user-select: none; } ul#edittabs li a:hover { background-color: snow; } ul#edittabs li a.etab_selected { background-color: snow; font-weight: bold; font-size: medium; padding: 0.7em 0.3em 0.38em 0.3em; }';
+	document.body.appendChild(style);
+	EditorTabsManager.initialised = true;
+	return true;
+    },
 }
 
 highlightSourceCode();
