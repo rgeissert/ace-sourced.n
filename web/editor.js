@@ -1,7 +1,6 @@
 
 editor = undefined;
 originalcode = undefined;
-originaldoc = undefined;
 
 function getAbsoluteTopOffset(el) {
     var topOffset = 0;
@@ -196,8 +195,6 @@ function highlightSourceCode() {
 
     ct.parentElement.replaceChild(cmirror_elem, ct);
     editor.resize(true);
-
-    originaldoc = editor.getSession().getDocument();
 
     var message_style = document.createElement('style');
     message_style.type = 'text/css';
@@ -448,10 +445,8 @@ function diffOtherPath(otherPath, raw_url, cb) {
 }
 
 function openDiffDocument(diff) {
-    var Document = ace.require("./document").Document;
-    var doc = new Document(diff);
-    editor.getSession().setDocument(doc);
-    editor.getSession().setMode('ace/mode/diff');
+    var diff_session = ace.createEditSession(diff, 'ace/mode/diff');
+    editor.setSession(diff_session);
 }
 
 function queryJSONApi(path, cb) {
