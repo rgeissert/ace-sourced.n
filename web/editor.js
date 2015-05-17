@@ -1,6 +1,7 @@
 
 editor = undefined;
 originalcode = undefined;
+originaldoc = undefined;
 
 function getAbsoluteTopOffset(el) {
     var topOffset = 0;
@@ -195,6 +196,8 @@ function highlightSourceCode() {
 
     ct.parentElement.replaceChild(cmirror_elem, ct);
     editor.resize(true);
+
+    originaldoc = editor.getSession().getDocument();
 
     var message_style = document.createElement('style');
     message_style.type = 'text/css';
@@ -444,6 +447,13 @@ function diffOtherPath(otherPath, raw_url, cb) {
     req.send();
 }
 
+function openDiffDocument(diff) {
+    var Document = ace.require("./document").Document;
+    var doc = new Document(diff);
+    editor.getSession().setDocument(doc);
+    editor.getSession().setMode('ace/mode/diff');
+}
+
 function queryJSONApi(path, cb) {
     var req = new XMLHttpRequest();
 
@@ -493,7 +503,7 @@ function fillOtherVersions() {
 			link.textContent = _version;
 			link.href = '#';
 			link.onclick = function() {
-			    diffOtherPath(_otherFile, _res.raw_url, window.alert);
+			    diffOtherPath(_otherFile, _res.raw_url, openDiffDocument);
 			    return false;
 			}
 			_item.appendChild(link);
