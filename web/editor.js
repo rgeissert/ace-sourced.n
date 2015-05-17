@@ -1,6 +1,7 @@
 
 editor = undefined;
 originalcode = undefined;
+originalmode = undefined;
 
 function getAbsoluteTopOffset(el) {
     var topOffset = 0;
@@ -17,6 +18,9 @@ function getCellForLine(line) {
 }
 
 function getMode() {
+    if (originalmode != undefined)
+	return originalmode;
+
     var mode = document.getElementById('sourcecode').className.split(/\s+/)[0];
 
     var mode_conversion = {
@@ -166,6 +170,7 @@ function getMode() {
 	    mode = filext_modes[filext];
     }
 
+    originalmode = mode;
     return mode;
 }
 
@@ -330,8 +335,27 @@ function setCodeEditable(enabled) {
 }
 
 function editcode() {
+    if (EditorTabsManager.init()) {
+	EditorTabsManager.createTab(editor.getSession(), 'File', false);
+	// yeah, it shouldn't need to be done here...
+	repositionInfoBox();
+    }
     // explicit call to make sure the original code is backed up
     getOriginalCode();
+
+    EditorTabsManager.createActionTab(function(e) {
+	var mode = getMode();
+	if (mode != 'no-highlight')
+	    mode = 'ace/mode/' + mode;
+	else
+	    mode = undefined;
+
+	var new_session = ace.createEditSession(getOriginalCode(), mode);
+	EditorTabsManager.createTab(new_session, 'File');
+	EditorTabsManager.selectSession(new_session);
+	repositionInfoBox();
+    }, '+');
+
     setCodeEditable(true);
 
     var editlink = document.getElementById('editcode_trigger');
@@ -586,6 +610,18 @@ EditorTabsManager = {
 	    li.className = 'etab_selected';
 	    a.blur();
 	}
+    },
+    createActionTab: function(cb, label = '') {
+	var li = document.createElement('li');
+	var a = document.createElement('a');
+
+	a.textContent = label;
+	a.href = '#';
+	a.onclick = cb;
+	li.appendChild(a);
+
+	var etab = document.getElementById('edittabs');
+	etab.appendChild(li);
     },
     onclickTab: function(t, e) {
 	var tabs = EditorTabsManager.tabs;
