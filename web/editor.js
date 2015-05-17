@@ -456,7 +456,7 @@ function diffOtherPath(otherPath, raw_url, cb) {
 
 function openDiffDocument(diff, extra_label) {
     if (EditorTabsManager.init())
-	EditorTabsManager.createTab(editor.getSession(), 'File');
+	EditorTabsManager.createTab(editor.getSession(), 'File', false);
 
     var diff_session = ace.createEditSession(diff, 'ace/mode/diff');
     EditorTabsManager.createTab(diff_session, 'Diff ' + extra_label);
@@ -540,9 +540,10 @@ function fetchOtherVersions() {
 
 EditorTabsManager = {
     tabs: new Array(),
-    createTab: function(session, label = '') {
+    createTab: function(session, label = '', closable = true) {
 	var li = document.createElement('li');
 	var a = document.createElement('a');
+	var x = document.createElement('a');
 	var t = {
 	    label: label,
 	    session: session,
@@ -552,9 +553,20 @@ EditorTabsManager = {
 	a.textContent = label;
 	a.href = '#';
 	a.onclick = function(e) {
-	    return EditorTabsManager.onclickHandler(t, e);
+	    return EditorTabsManager.onclickTab(t, e);
 	}
 	li.appendChild(a);
+
+	if (closable) {
+	    x.textContent = '(x)';
+	    x.style.fontSize = 'x-small';
+	    x.onclick = function(e) {
+		return EditorTabsManager.oncloseTab(t, e);
+	    }
+
+	    li.appendChild(document.createTextNode(' '));
+	    li.appendChild(x);
+	}
 
 	var etab = document.getElementById('edittabs');
 	etab.appendChild(li);
@@ -565,7 +577,7 @@ EditorTabsManager = {
 	    a.blur();
 	}
     },
-    onclickHandler : function(t, e) {
+    onclickTab: function(t, e) {
 	var tabs = EditorTabsManager.tabs;
 	for (var i = 0; i < tabs.length; i++) {
 	    if (e.currentTarget == tabs[i].a) {
@@ -576,6 +588,21 @@ EditorTabsManager = {
 	    }
 	}
 	editor.setSession(t.session);
+	return false;
+    },
+    oncloseTab: function(t, e) {
+	var tabs = EditorTabsManager.tabs;
+	var li = e.currentTarget.parentElement;
+
+	li.parentElement.removeChild(li);
+
+	for (var i = 0; i < tabs.length; i++) {
+	    if (t == tabs[i]) {
+		tabs.splice(i, 1);
+	    }
+	}
+
+	EditorTabsManager.selectSession(tabs[0].session);
 	return false;
     },
     selectSession: function(session) {
