@@ -561,7 +561,7 @@ EditorTabsManager = {
 
 	EditorTabsManager.tabs.push(t);
 	if (EditorTabsManager.tabs.length == 1) {
-	    a.className = 'etab_selected';
+	    li.className = 'etab_selected';
 	    a.blur();
 	}
     },
@@ -569,10 +569,10 @@ EditorTabsManager = {
 	var tabs = EditorTabsManager.tabs;
 	for (var i = 0; i < tabs.length; i++) {
 	    if (e.currentTarget == tabs[i].a) {
-		tabs[i].a.className = 'etab_selected';
+		tabs[i].a.parentElement.className = 'etab_selected';
 		tabs[i].a.blur();
 	    } else {
-		tabs[i].a.className = '';
+		tabs[i].a.parentElement.className = '';
 	    }
 	}
 	editor.setSession(t.session);
@@ -582,10 +582,10 @@ EditorTabsManager = {
 	var tabs = EditorTabsManager.tabs;
 	for (var i = 0; i < tabs.length; i++) {
 	    if (session == tabs[i].session) {
-		tabs[i].a.className = 'etab_selected';
+		tabs[i].a.parentElement.className = 'etab_selected';
 		tabs[i].a.blur();
 	    } else {
-		tabs[i].a.className = '';
+		tabs[i].a.parentElement.className = '';
 	    }
 	}
 	editor.setSession(session);
@@ -597,7 +597,7 @@ EditorTabsManager = {
 
 	var style = document.createElement('style');
 	style.type = 'text/css';
-	style.innerHTML = 'ul#edittabs { list-style-type: none; margin: 30px 0 0 0; padding: 0 0 0.3em 0; } ul#edittabs li { display: inline; } ul#edittabs li a { color: black; font-size: smaller; background-color: whitesmoke; border: 1px solid #c9c3ba; border-bottom: none; padding: 0.3em; text-decoration: none; -moz-user-select: none; -webkit-user-select: none; -ms-user-select: none; } ul#edittabs li a:hover { background-color: snow; } ul#edittabs li a.etab_selected { background-color: snow; font-weight: bold; font-size: medium; padding: 0.7em 0.3em 0.38em 0.3em; }';
+	style.innerHTML = 'ul#edittabs { list-style-type: none; margin: 30px 0 0 0; padding: 0 0 0.3em 0; } ul#edittabs li { display: inline; font-size: smaller; background-color: whitesmoke; border: 1px solid #c9c3ba; border-bottom: none; padding: 0.3em; -moz-user-select: none; -webkit-user-select: none; -ms-user-select: none; } ul#edittabs li a { color: black; text-decoration: none; -moz-user-select: none; -webkit-user-select: none; -ms-user-select: none; } ul#edittabs li:hover { background-color: snow; } ul#edittabs li.etab_selected { background-color: snow; font-weight: bold; font-size: medium; padding: 0.7em 0.3em 0.38em 0.3em; }';
 	document.body.appendChild(style);
 	EditorTabsManager.initialised = true;
 	return true;
