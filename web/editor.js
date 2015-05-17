@@ -334,12 +334,16 @@ function setCodeEditable(enabled) {
     }
 }
 
-function editcode() {
+function initDefaultTab() {
     if (EditorTabsManager.init()) {
 	EditorTabsManager.createTab(editor.getSession(), 'File', false);
 	// yeah, it shouldn't need to be done here...
 	repositionInfoBox();
     }
+}
+
+function editcode() {
+    initDefaultTab();
     // explicit call to make sure the original code is backed up
     getOriginalCode();
 
@@ -486,11 +490,7 @@ function diffOtherPath(otherPath, raw_url, cb) {
 }
 
 function openDiffDocument(diff, extra_label) {
-    if (EditorTabsManager.init()) {
-	EditorTabsManager.createTab(editor.getSession(), 'File', false);
-	// yeah, it shouldn't need to be done here...
-	repositionInfoBox();
-    }
+    initDefaultTab();
 
     var diff_session = ace.createEditSession(diff, 'ace/mode/diff');
     EditorTabsManager.createTab(diff_session, 'Diff ' + extra_label);
