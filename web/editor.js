@@ -284,7 +284,6 @@ function highlightSourceCode() {
 
     ibox.parentElement.parentElement.insertBefore(etabs, ibox.parentElement);
 }
-
 function getCode() {
     if (editor == undefined) {
 	var sc = document.getElementById('sourcecode');
@@ -302,6 +301,12 @@ function getCode() {
 	return editor.getValue();
     }
 }
+function getOriginalCode() {
+    // Backup the original code for later use
+    if (originalcode == undefined)
+	originalcode = getCode();
+    return originalcode;
+}
 function setCode(newCode) {
     if (editor == undefined) {
 	document.getElementById('sourcecode').textContent = newCode;
@@ -318,8 +323,8 @@ function setCodeEditable(enabled) {
 }
 
 function editcode() {
-    // Backup the original code for later use
-    originalcode = getCode();
+    // explicit call to make sure the original code is backed up
+    getOriginalCode();
     setCodeEditable(true);
 
     var editlink = document.getElementById('editcode_trigger');
@@ -380,7 +385,7 @@ function generatePatch() {
     var filepath, patch;
 
     filepath = getFilePath();
-    patch = JsDiff.createPatch(filepath, originalcode, getCode(), undefined, undefined);
+    patch = JsDiff.createPatch(filepath, getOriginalCode(), getCode(), undefined, undefined);
 
     return patch;
 }
@@ -433,9 +438,9 @@ function diffOtherPath(otherPath, raw_url, cb) {
 	var patch;
 
 	if (JsDiff.createTwoFilesPatch != undefined) {
-	    patch = JsDiff.createTwoFilesPatch(otherPath, filepath, otherCode, getCode(), undefined, undefined);
+	    patch = JsDiff.createTwoFilesPatch(otherPath, filepath, otherCode, getOriginalCode(), undefined, undefined);
 	} else {
-	    patch = JsDiff.createPatch(filepath, otherCode, getCode(), undefined, undefined);
+	    patch = JsDiff.createPatch(filepath, otherCode, getOriginalCode(), undefined, undefined);
 	}
 
 	cb(patch);
