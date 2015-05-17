@@ -431,7 +431,7 @@ function diffOtherPath(otherPath, raw_url, cb) {
 	var patch;
 
 	if (JsDiff.createTwoFilesPatch != undefined) {
-	    patch = JsDiff.createPatch(otherPath, filepath, otherCode, getCode(), undefined, undefined);
+	    patch = JsDiff.createTwoFilesPatch(otherPath, filepath, otherCode, getCode(), undefined, undefined);
 	} else {
 	    patch = JsDiff.createPatch(filepath, otherCode, getCode(), undefined, undefined);
 	}
