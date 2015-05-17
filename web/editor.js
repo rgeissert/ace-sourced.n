@@ -444,22 +444,26 @@ function diffOtherPath(otherPath, raw_url, cb) {
     req.send();
 }
 
-function checkIfSourceFileExists(file, cb) {
+function queryJSONApi(path, cb) {
     var req = new XMLHttpRequest();
 
-    req.onload = function() {
-	var res = req.response;
+    req.onload = cb;
+    req.onerror = function() {
+	window.alert('gah, we failed to query the debsources API');
+    }
+    req.open('GET', '/api/' + path, true);
+    req.responseType = 'json';
+    req.send();
+}
+
+function checkIfSourceFileExists(file, cb) {
+    queryJSONApi('src/' + file + '/', function() {
+	var res = this.response;
 	if (res.type != undefined && res.type == 'file')
 	    cb(true, res);
 	else
 	    cb(false);
-    }
-    req.onerror = function() {
-	window.alert('gah, we failed to query the debsources API');
-    }
-    req.open('GET', '/api/src/' + file + '/');
-    req.responseType = 'json';
-    req.send();
+    });
 }
 
 function fillOtherVersions() {
@@ -509,15 +513,7 @@ function fillOtherVersions() {
 }
 
 function fetchOtherVersions() {
-    var req = new XMLHttpRequest();
-
-    req.onload = fillOtherVersions;
-    req.onerror = function() {
-	window.alert('gah, we failed to query the debsources API');
-    }
-    req.open('GET', '/api/src/' + getSourceName() + '/');
-    req.responseType = 'json';
-    req.send();
+    queryJSONApi('src/' + getSourceName() + '/', fillOtherVersions);
 }
 
 highlightSourceCode();
