@@ -169,6 +169,12 @@ function getMode() {
     return mode;
 }
 
+function repositionInfoBox() {
+    var ibox = document.getElementById('pkginfobox');
+    var topOff = getAbsoluteTopOffset(document.getElementById('code_editor'));
+    ibox.style.top = (topOff + 20) + 'px';
+}
+
 function highlightSourceCode() {
     var ct = document.getElementById('codetable');
     var sc = document.getElementById('sourcecode');
@@ -283,6 +289,7 @@ function highlightSourceCode() {
     etabs.id = 'edittabs';
 
     ibox.parentElement.parentElement.insertBefore(etabs, ibox.parentElement);
+    repositionInfoBox();
 }
 function getCode() {
     if (editor == undefined) {
@@ -455,8 +462,11 @@ function diffOtherPath(otherPath, raw_url, cb) {
 }
 
 function openDiffDocument(diff, extra_label) {
-    if (EditorTabsManager.init())
+    if (EditorTabsManager.init()) {
 	EditorTabsManager.createTab(editor.getSession(), 'File', false);
+	// yeah, it shouldn't need to be done here...
+	repositionInfoBox();
+    }
 
     var diff_session = ace.createEditSession(diff, 'ace/mode/diff');
     EditorTabsManager.createTab(diff_session, 'Diff ' + extra_label);
