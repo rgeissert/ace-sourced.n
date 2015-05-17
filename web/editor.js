@@ -454,12 +454,12 @@ function diffOtherPath(otherPath, raw_url, cb) {
     req.send();
 }
 
-function openDiffDocument(diff) {
+function openDiffDocument(diff, extra_label) {
     if (EditorTabsManager.init())
 	EditorTabsManager.createTab(editor.getSession(), 'File');
 
     var diff_session = ace.createEditSession(diff, 'ace/mode/diff');
-    EditorTabsManager.createTab(diff_session, 'Diff');
+    EditorTabsManager.createTab(diff_session, 'Diff ' + extra_label);
     EditorTabsManager.selectSession(diff_session);
 }
 
@@ -513,7 +513,9 @@ function fillOtherVersions() {
 			link.textContent = _version;
 			link.href = '#';
 			link.onclick = function() {
-			    diffOtherPath(_otherFile, _res.raw_url, openDiffDocument);
+			    diffOtherPath(_otherFile, _res.raw_url, function(d) {
+				openDiffDocument(d, 'since ' + _version);
+			    });
 			    return false;
 			}
 			_item.appendChild(link);
