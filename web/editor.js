@@ -603,7 +603,12 @@ EditorTabsManager = {
 	}
 
 	var etab = document.getElementById('edittabs');
-	etab.appendChild(li);
+	var actionTabs = etab.getElementsByClassName('etab_actiontab');
+	if (actionTabs.length > 0) {
+	    etab.insertBefore(li, actionTabs[0]);
+	} else {
+	    etab.appendChild(li);
+	}
 
 	EditorTabsManager.tabs.push(t);
 	if (EditorTabsManager.tabs.length == 1) {
@@ -618,6 +623,7 @@ EditorTabsManager = {
 	a.textContent = label;
 	a.href = '#';
 	a.onclick = cb;
+	a.className = 'etab_actiontab';
 	li.appendChild(a);
 
 	var etab = document.getElementById('edittabs');
