@@ -174,6 +174,18 @@ function getMode() {
     return mode;
 }
 
+function getAceMode(mode = undefined) {
+    if (mode == undefined)
+	mode = getMode();
+
+    if (mode != 'no-highlight')
+	mode = 'ace/mode/' + mode;
+    else
+	mode = undefined;
+
+    return mode;
+}
+
 function repositionInfoBox() {
     var ibox = document.getElementById('pkginfobox');
     var topOff = getAbsoluteTopOffset(document.getElementById('code_editor'));
@@ -189,15 +201,15 @@ function highlightSourceCode() {
     // grab the code before getCode/setCode change to using
     // editor:
     var sourceCode = getCode();
-    var mode = getMode();
+    var mode = getAceMode();
 
     cmirror_elem.textContent = sourceCode;
     cmirror_elem.id = 'code_editor';
 
     editor = ace.edit(cmirror_elem);
 
-    if (mode != 'no-highlight')
-	editor.getSession().setMode("ace/mode/"+mode);
+    if (mode)
+	editor.getSession().setMode(mode);
     editor.setTheme('ace/theme/dreamweaver');
     editor.setOption('maxLines', Infinity);
     editor.setOption('vScrollBarAlwaysVisible', false);
@@ -348,13 +360,7 @@ function editcode() {
     getOriginalCode();
 
     EditorTabsManager.createActionTab(function(e) {
-	var mode = getMode();
-	if (mode != 'no-highlight')
-	    mode = 'ace/mode/' + mode;
-	else
-	    mode = undefined;
-
-	var new_session = ace.createEditSession(getOriginalCode(), mode);
+	var new_session = ace.createEditSession(getOriginalCode(), getAceMode());
 	EditorTabsManager.createTab(new_session, 'File');
 	EditorTabsManager.selectSession(new_session);
 	repositionInfoBox();
@@ -492,7 +498,7 @@ function diffOtherPath(otherPath, raw_url, cb) {
 function openDiffDocument(diff, extra_label) {
     initDefaultTab();
 
-    var diff_session = ace.createEditSession(diff, 'ace/mode/diff');
+    var diff_session = ace.createEditSession(diff, getAceMode('diff'));
     EditorTabsManager.createTab(diff_session, 'Diff ' + extra_label);
     EditorTabsManager.selectSession(diff_session);
 }
