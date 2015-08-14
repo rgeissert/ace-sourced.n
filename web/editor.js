@@ -553,6 +553,9 @@ function fillOtherVersions() {
 			link.textContent = _version;
 			link.href = '#';
 			link.onclick = function() {
+			    // TODO: be smarter and compare them the
+			    // other way around when the other version
+			    // is greater than the current one
 			    diffOtherPath(_otherFile, _res.raw_url, function(d) {
 				openDiffDocument(d, 'since ' + _version);
 			    });
