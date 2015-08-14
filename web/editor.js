@@ -386,6 +386,19 @@ function editcode() {
 	separator.textContent = ' | ';
 	editlink.parentElement.insertBefore(separator, editlink.nextElementSibling);
 
+	var difftab = document.createElement('a');
+	difftab.textContent = 'diff edits';
+	difftab.onclick = function() {
+	    openDiffDocument(generatePatch(), 'edits');
+	}
+	difftab.id = 'difftab_trigger';
+	difftab.href = '#';
+	editlink.parentElement.insertBefore(difftab, editlink.nextElementSibling);
+
+	separator = document.createElement('span');
+	separator.textContent = ' | ';
+	editlink.parentElement.insertBefore(separator, editlink.nextElementSibling);
+
 	// patch the download link to make it download the modified file
 	var dl_el = email.nextElementSibling;
 	while (dl_el != null && dl_el.textContent != 'download') {
@@ -396,6 +409,7 @@ function editcode() {
 	    dl_el.onclick = downloadCode;
 	    dl_el.textContent = 'download edit';
 	    dl_el.download = getFilePath().split(/\//).pop();
+	    // FIXME: when displaying a diff, adjust the file name
 	}
     }
 
