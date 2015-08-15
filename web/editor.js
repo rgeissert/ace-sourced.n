@@ -406,6 +406,7 @@ function editcode() {
 	}
 	if (dl_el != null) {
 	    dl_el.href = '#';
+	    dl_el.id = 'download_trigger';
 	    dl_el.onclick = downloadCode;
 	    dl_el.textContent = 'download edit';
 	    dl_el.download = getFilePath().split(/\//).pop();
