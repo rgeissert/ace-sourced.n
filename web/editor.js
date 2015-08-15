@@ -174,7 +174,7 @@ function getMode() {
     return mode;
 }
 
-function getAceMode(mode = undefined) {
+function getAceMode(mode) {
     if (mode == undefined)
 	mode = getMode();
 
@@ -597,7 +597,10 @@ function fetchOtherVersions() {
 
 EditorTabsManager = {
     tabs: new Array(),
-    createTab: function(session, label = '', closable = true) {
+    createTab: function(session, label, closable) {
+	label = (label == undefined)? '' : label;
+	closable = (closable == undefined)? true : closable;
+
 	var li = document.createElement('li');
 	var a = document.createElement('a');
 	var x = document.createElement('a');
@@ -639,7 +642,9 @@ EditorTabsManager = {
 	    a.blur();
 	}
     },
-    createActionTab: function(cb, label = '') {
+    createActionTab: function(cb, label) {
+	label = (label == undefined)? '' : label;
+
 	var li = document.createElement('li');
 	var a = document.createElement('a');
 
