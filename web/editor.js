@@ -631,7 +631,7 @@ EditorTabsManager = {
 	var etab = document.getElementById('edittabs');
 	var actionTabs = etab.getElementsByClassName('etab_actiontab');
 	if (actionTabs.length > 0) {
-	    etab.insertBefore(li, actionTabs[0]);
+	    etab.insertBefore(li, actionTabs[0].parentElement);
 	} else {
 	    etab.appendChild(li);
 	}
