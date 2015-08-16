@@ -352,15 +352,66 @@ function initDefaultTab() {
 	t.onSelected = function() {
 	    updateLinksView('code');
 	}
-	// yeah, it shouldn't need to be done here...
-	repositionInfoBox();
+	EditorTabsManager.selectSession(editor.getSession());
     }
 }
 
-function editcode() {
+function initEditorElements() {
+    if (document.getElementById('email_trigger') != null)
+	return;
+
+    var editlink = document.getElementById('editcode_trigger');
+    editlink.textContent = 'save as patch';
+    editlink.href = '#';
+    editlink.onclick = downloadPatch;
+    editlink.download = getFilePath() + '.patch';
+
+    email = document.createElement('a');
+    email.textContent = 'email patch';
+    email.onclick = emailPatch;
+    email.id = 'email_trigger';
+    email.href = '#';
+    editlink.parentElement.insertBefore(email, editlink.nextElementSibling);
+
+    separator = document.createElement('span');
+    separator.textContent = ' | ';
+    editlink.parentElement.insertBefore(separator, editlink.nextElementSibling);
+
+    var difftab = document.createElement('a');
+    difftab.textContent = 'diff edits';
+    difftab.onclick = function() {
+	openDiffDocument(generatePatch(), 'edits');
+    }
+    difftab.id = 'difftab_trigger';
+    difftab.href = '#';
+    editlink.parentElement.insertBefore(difftab, editlink.nextElementSibling);
+
+    separator = document.createElement('span');
+    separator.textContent = ' | ';
+    editlink.parentElement.insertBefore(separator, editlink.nextElementSibling);
+
+    // patch the download link to make it download the modified file
+    var dl_el = email.nextElementSibling;
+    while (dl_el != null && dl_el.textContent != 'download') {
+	dl_el = dl_el.nextElementSibling;
+    }
+    if (dl_el != null) {
+	dl_el.href = '#';
+	dl_el.id = 'download_trigger';
+	dl_el.onclick = downloadCode;
+	dl_el.textContent = 'download edit';
+	dl_el.download = getFilePath().split(/\//).pop();
+	// FIXME: when displaying a diff, adjust the file name
+    }
+
     initDefaultTab();
+}
+
+function editcode() {
     // explicit call to make sure the original code is backed up
     getOriginalCode();
+
+    initEditorElements();
 
     EditorTabsManager.createActionTab(function(e) {
 	var new_session = ace.createEditSession(getOriginalCode(), getAceMode());
@@ -374,72 +425,29 @@ function editcode() {
 
     setCodeEditable(true);
 
-    var editlink = document.getElementById('editcode_trigger');
-    editlink.textContent = 'save as patch';
-    editlink.href = '#';
-    editlink.onclick = downloadPatch;
-    editlink.download = getFilePath() + '.patch';
-
-    if (document.getElementById('email_trigger') == null) {
-	email = document.createElement('a');
-	email.textContent = 'email patch';
-	email.onclick = emailPatch;
-	email.id = 'email_trigger';
-	email.href = '#';
-	editlink.parentElement.insertBefore(email, editlink.nextElementSibling);
-
-	separator = document.createElement('span');
-	separator.textContent = ' | ';
-	editlink.parentElement.insertBefore(separator, editlink.nextElementSibling);
-
-	var difftab = document.createElement('a');
-	difftab.textContent = 'diff edits';
-	difftab.onclick = function() {
-	    openDiffDocument(generatePatch(), 'edits');
-	}
-	difftab.id = 'difftab_trigger';
-	difftab.href = '#';
-	editlink.parentElement.insertBefore(difftab, editlink.nextElementSibling);
-
-	separator = document.createElement('span');
-	separator.textContent = ' | ';
-	editlink.parentElement.insertBefore(separator, editlink.nextElementSibling);
-
-	// patch the download link to make it download the modified file
-	var dl_el = email.nextElementSibling;
-	while (dl_el != null && dl_el.textContent != 'download') {
-	    dl_el = dl_el.nextElementSibling;
-	}
-	if (dl_el != null) {
-	    dl_el.href = '#';
-	    dl_el.id = 'download_trigger';
-	    dl_el.onclick = downloadCode;
-	    dl_el.textContent = 'download edit';
-	    dl_el.download = getFilePath().split(/\//).pop();
-	    // FIXME: when displaying a diff, adjust the file name
-	}
-    }
-
     return false;
 }
 
 function updateLinksView(view) {
     switch (view) {
 	case 'code':
-	    document.getElementById('editcode_trigger').style.display = '';
+	    document.getElementById('editcode_trigger').style.display = 'none';
 	    document.getElementById('difftab_trigger').style.display = '';
-	    document.getElementById('email_trigger').textContent = 'email patch';
-	    document.getElementById('email_trigger').onclick = emailPatch;
+	    document.getElementById('email_trigger').style.display = 'none';
+	    document.getElementById('download_trigger').style.display = '';
 	    break;
 	case 'diff':
-	    document.getElementById('editcode_trigger').style.display = 'none';
+	    document.getElementById('editcode_trigger').style.display = '';
 	    document.getElementById('difftab_trigger').style.display = 'none';
+	    document.getElementById('email_trigger').style.display = '';
 	    document.getElementById('email_trigger').textContent = 'email as patch';
 	    document.getElementById('email_trigger').onclick = function() {
 		emailPatch(getCode());
 	    }
+	    document.getElementById('download_trigger').style.display = 'none';
 	    break;
     }
+    repositionInfoBox();
 }
 
 function getFilePath() {
@@ -538,7 +546,7 @@ function diffOtherPath(otherPath, raw_url, cb) {
 }
 
 function openDiffDocument(diff, extra_label) {
-    initDefaultTab();
+    initEditorElements();
 
     var diff_session = ace.createEditSession(diff, getAceMode('diff'));
     var t = EditorTabsManager.createTab(diff_session, 'Diff ' + extra_label);
