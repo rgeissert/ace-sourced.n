@@ -432,19 +432,27 @@ function updateLinksView(view) {
     switch (view) {
 	case 'code':
 	    document.getElementById('editcode_trigger').style.display = 'none';
+	    document.getElementById('editcode_trigger').nextElementSibling.style.display = 'none';
 	    document.getElementById('difftab_trigger').style.display = '';
+	    document.getElementById('difftab_trigger').nextElementSibling.style.display = '';
 	    document.getElementById('email_trigger').style.display = 'none';
+	    document.getElementById('email_trigger').nextElementSibling.style.display = 'none';
 	    document.getElementById('download_trigger').style.display = '';
+	    document.getElementById('download_trigger').nextElementSibling.style.display = '';
 	    break;
 	case 'diff':
 	    document.getElementById('editcode_trigger').style.display = '';
+	    document.getElementById('editcode_trigger').nextElementSibling.style.display = '';
 	    document.getElementById('difftab_trigger').style.display = 'none';
+	    document.getElementById('difftab_trigger').nextElementSibling.style.display = 'none';
 	    document.getElementById('email_trigger').style.display = '';
 	    document.getElementById('email_trigger').textContent = 'email as patch';
 	    document.getElementById('email_trigger').onclick = function() {
 		emailPatch(getCode());
 	    }
+	    document.getElementById('email_trigger').nextElementSibling.style.display = '';
 	    document.getElementById('download_trigger').style.display = 'none';
+	    document.getElementById('download_trigger').nextElementSibling.style.display = 'none';
 	    break;
     }
     repositionInfoBox();
