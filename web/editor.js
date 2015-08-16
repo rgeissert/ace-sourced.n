@@ -348,7 +348,10 @@ function setCodeEditable(enabled) {
 
 function initDefaultTab() {
     if (EditorTabsManager.init()) {
-	EditorTabsManager.createTab(editor.getSession(), 'File', false);
+	var t = EditorTabsManager.createTab(editor.getSession(), 'File', false);
+	t.onSelected = function() {
+	    updateLinksView('code');
+	}
 	// yeah, it shouldn't need to be done here...
 	repositionInfoBox();
     }
@@ -361,7 +364,10 @@ function editcode() {
 
     EditorTabsManager.createActionTab(function(e) {
 	var new_session = ace.createEditSession(getOriginalCode(), getAceMode());
-	EditorTabsManager.createTab(new_session, 'File');
+	var t = EditorTabsManager.createTab(new_session, 'File');
+	t.onSelected = function() {
+	    updateLinksView('code');
+	}
 	EditorTabsManager.selectSession(new_session);
 	repositionInfoBox();
     }, '+');
@@ -417,6 +423,25 @@ function editcode() {
     return false;
 }
 
+function updateLinksView(view) {
+    switch (view) {
+	case 'code':
+	    document.getElementById('editcode_trigger').style.display = '';
+	    document.getElementById('difftab_trigger').style.display = '';
+	    document.getElementById('email_trigger').textContent = 'email patch';
+	    document.getElementById('email_trigger').onclick = emailPatch;
+	    break;
+	case 'diff':
+	    document.getElementById('editcode_trigger').style.display = 'none';
+	    document.getElementById('difftab_trigger').style.display = 'none';
+	    document.getElementById('email_trigger').textContent = 'email as patch';
+	    document.getElementById('email_trigger').onclick = function() {
+		emailPatch(getCode());
+	    }
+	    break;
+    }
+}
+
 function getFilePath() {
     var filepath = document.getElementById('breadcrumbs').textContent;
     return filepath.replace(/ \/ /g, '/').replace(/^source\//, '').replace('/', '-');
@@ -446,9 +471,11 @@ function generatePatch() {
     return patch;
 }
 
-function emailPatch() {
-    var patch = generatePatch();
+function emailPatch(patch) {
     var payload;
+
+    if (patch == undefined)
+	patch = generatePatch();
 
     payload='mailto:submit@bugs.debian.org?body=';
     payload+=encodeURIComponent("Source: "+getSourceName()+"\n"+
@@ -514,7 +541,10 @@ function openDiffDocument(diff, extra_label) {
     initDefaultTab();
 
     var diff_session = ace.createEditSession(diff, getAceMode('diff'));
-    EditorTabsManager.createTab(diff_session, 'Diff ' + extra_label);
+    var t = EditorTabsManager.createTab(diff_session, 'Diff ' + extra_label);
+    t.onSelected = function() {
+	updateLinksView('diff');
+    }
     EditorTabsManager.selectSession(diff_session);
 }
 
@@ -609,6 +639,7 @@ EditorTabsManager = {
 	    label: label,
 	    session: session,
 	    a: a,
+	    onSelected: undefined,
 	};
 
 	a.textContent = label;
@@ -642,6 +673,8 @@ EditorTabsManager = {
 	    li.className = 'etab_selected';
 	    a.blur();
 	}
+
+	return t;
     },
     createActionTab: function(cb, label) {
 	label = (label == undefined)? '' : label;
@@ -660,15 +693,11 @@ EditorTabsManager = {
     },
     onclickTab: function(t, e) {
 	var tabs = EditorTabsManager.tabs;
+
 	for (var i = 0; i < tabs.length; i++) {
-	    if (e.currentTarget == tabs[i].a) {
-		tabs[i].a.parentElement.className = 'etab_selected';
-		tabs[i].a.blur();
-	    } else {
-		tabs[i].a.parentElement.className = '';
-	    }
+	    if (e.currentTarget == tabs[i].a)
+		EditorTabsManager.selectSession(tabs[i].session);
 	}
-	editor.setSession(t.session);
 	return false;
     },
     oncloseTab: function(t, e) {
@@ -691,15 +720,21 @@ EditorTabsManager = {
     },
     selectSession: function(session) {
 	var tabs = EditorTabsManager.tabs;
+	var t;
 	for (var i = 0; i < tabs.length; i++) {
 	    if (session == tabs[i].session) {
-		tabs[i].a.parentElement.className = 'etab_selected';
-		tabs[i].a.blur();
+		t = tabs[i];
+		t.a.parentElement.className = 'etab_selected';
+		t.a.blur();
 	    } else {
 		tabs[i].a.parentElement.className = '';
 	    }
 	}
 	editor.setSession(session);
+
+	if (t.onSelected != undefined)
+	    t.onSelected();
+
 	return session;
     },
     init: function() {
