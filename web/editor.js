@@ -297,7 +297,7 @@ function highlightSourceCode() {
 
     overs_a.textContent = 'Other versions';
     overs_a.href = '#';
-    overs_a.onclick = fetchOtherVersions;
+    overs_a.onclick = debsources.fetchOtherVersions;
     overs.id = 'overs';
     overs.appendChild(overs_a);
     ibox.appendChild(overs);
@@ -529,29 +529,6 @@ function openPayload(payload) {
     window.location = payload;
 }
 
-function diffOtherPath(otherPath, raw_url, cb) {
-    var req = new XMLHttpRequest();
-    req.onload = function() {
-	var otherCode = this.responseText;
-	var filepath = getFilePath();
-	var patch;
-
-	if (JsDiff.createTwoFilesPatch != undefined) {
-	    patch = JsDiff.createTwoFilesPatch(otherPath, filepath, otherCode, getOriginalCode(), undefined, undefined);
-	} else {
-	    patch = JsDiff.createPatch(filepath, otherCode, getOriginalCode(), undefined, undefined);
-	}
-
-	cb(patch);
-    }
-    req.onerror = function() {
-	window.alert("meh, we failed to download the other file");
-    }
-
-    req.open('GET', raw_url, true);
-    req.responseType = 'text';
-    req.send();
-}
 
 function openDiffDocument(diff, extra_label) {
     initEditorElements();
@@ -564,82 +541,104 @@ function openDiffDocument(diff, extra_label) {
     EditorTabsManager.selectSession(diff_session);
 }
 
-function queryJSONApi(path, cb) {
-    var req = new XMLHttpRequest();
+debsources = {
+    diffOtherPath: function(otherPath, raw_url, cb) {
+	var req = new XMLHttpRequest();
+	req.onload = function() {
+	    var otherCode = this.responseText;
+	    var filepath = getFilePath();
+	    var patch;
 
-    req.onload = cb;
-    req.onerror = function() {
-	window.alert('gah, we failed to query the debsources API');
-    }
-    req.open('GET', '/api/' + path, true);
-    req.responseType = 'json';
-    req.send();
-}
+	    if (JsDiff.createTwoFilesPatch != undefined) {
+		patch = JsDiff.createTwoFilesPatch(otherPath, filepath, otherCode, getOriginalCode(), undefined, undefined);
+	    } else {
+		patch = JsDiff.createPatch(filepath, otherCode, getOriginalCode(), undefined, undefined);
+	    }
 
-function checkIfSourceFileExists(file, cb) {
-    queryJSONApi('src/' + file + '/', function() {
+	    cb(patch);
+	}
+	req.onerror = function() {
+	    window.alert("meh, we failed to download the other file");
+	}
+
+	req.open('GET', raw_url, true);
+	req.responseType = 'text';
+	req.send();
+    },
+    queryJSONApi: function(path, cb) {
+	var req = new XMLHttpRequest();
+
+	req.onload = cb;
+	req.onerror = function() {
+	    window.alert('gah, we failed to query the debsources API');
+	}
+	req.open('GET', '/api/' + path, true);
+	req.responseType = 'json';
+	req.send();
+    },
+    checkIfSourceFileExists: function(file, cb) {
+	debsources.queryJSONApi('src/' + file + '/', function() {
+	    var res = this.response;
+	    if (res.type != undefined && res.type == 'file')
+		cb(true, res);
+	    else
+		cb(false);
+	});
+    },
+    fillOtherVersions: function() {
+	var overs = document.getElementById('overs');
 	var res = this.response;
-	if (res.type != undefined && res.type == 'file')
-	    cb(true, res);
-	else
-	    cb(false);
-    });
-}
+	var list = document.createElement('ul');
+	var label = document.createElement('span');
+	var ourVersion = getSourceVersion();
 
-function fillOtherVersions() {
-    var overs = document.getElementById('overs');
-    var res = this.response;
-    var list = document.createElement('ul');
-    var label = document.createElement('span');
-    var ourVersion = getSourceVersion();
+	label.textContent = overs.textContent;
 
-    label.textContent = overs.textContent;
+	for (var n in res.versions) {
+	    var ver = res.versions[n];
 
-    for (var n in res.versions) {
-	var ver = res.versions[n];
+	    if (ver.version == ourVersion)
+		continue;
 
-	if (ver.version == ourVersion)
-	    continue;
+	    var item = document.createElement('li');
+	    var otherFileAPI  = getSourceName() + '/' + ver.version + '/' + getUnversionedFilePath();
+	    var otherFileFancy = getSourceName() + '-' + ver.version + '/' + getUnversionedFilePath();
+	    item.textContent = ver.version;
+	    var cb = function genCallback(_item, _version, _otherFile) {
+		    return function(exists, _res) {
+			if (exists) {
+			    _item.innerHTML = '';
+			    var link = document.createElement('a');
 
-	var item = document.createElement('li');
-	var otherFileAPI  = getSourceName() + '/' + ver.version + '/' + getUnversionedFilePath();
-	var otherFileFancy = getSourceName() + '-' + ver.version + '/' + getUnversionedFilePath();
-	item.textContent = ver.version;
-	var cb = function genCallback(_item, _version, _otherFile) {
-		return function(exists, _res) {
-		    if (exists) {
-			_item.innerHTML = '';
-			var link = document.createElement('a');
-
-			link.textContent = _version;
-			link.href = '#';
-			link.onclick = function() {
-			    // TODO: be smarter and compare them the
-			    // other way around when the other version
-			    // is greater than the current one
-			    diffOtherPath(_otherFile, _res.raw_url, function(d) {
-				openDiffDocument(d, 'since ' + _version);
-			    });
-			    return false;
+			    link.textContent = _version;
+			    link.href = '#';
+			    link.onclick = function() {
+				// TODO: be smarter and compare them the
+				// other way around when the other version
+				// is greater than the current one
+				debsources.diffOtherPath(_otherFile, _res.raw_url, function(d) {
+				    openDiffDocument(d, 'since ' + _version);
+				});
+				return false;
+			    }
+			    _item.appendChild(link);
+			} else {
+			    _item.style.textDecoration = 'line-through';
+			    _item.style.fontSize = 'smaller';
+			    _item.title = 'The file does not exist in version ' + _version;
 			}
-			_item.appendChild(link);
-		    } else {
-			_item.style.textDecoration = 'line-through';
-			_item.style.fontSize = 'smaller';
-			_item.title = 'The file does not exist in version ' + _version;
-		    }
-	    };
-	}(item, ver.version, otherFileFancy);
-	checkIfSourceFileExists(otherFileAPI, cb);
-	list.appendChild(item);
-    }
-    overs.innerHTML = '';
-    overs.appendChild(label);
-    overs.appendChild(list);
-}
-
-function fetchOtherVersions() {
-    queryJSONApi('src/' + getSourceName() + '/', fillOtherVersions);
+		};
+	    }(item, ver.version, otherFileFancy);
+	    debsources.checkIfSourceFileExists(otherFileAPI, cb);
+	    list.appendChild(item);
+	}
+	overs.innerHTML = '';
+	overs.appendChild(label);
+	overs.appendChild(list);
+    },
+    fetchOtherVersions: function() {
+	debsources.queryJSONApi('src/' + getSourceName() + '/', debsources.fillOtherVersions);
+    },
 }
 
 EditorTabsManager = {
