@@ -429,30 +429,35 @@ function editcode() {
 }
 
 function updateLinksView(view) {
+    var editcode_t = document.getElementById('editcode_trigger');
+    var difftab_t = document.getElementById('difftab_trigger');
+    var email_t = document.getElementById('email_trigger');
+    var download_t = document.getElementById('download_trigger');
+
     switch (view) {
 	case 'code':
-	    document.getElementById('editcode_trigger').style.display = 'none';
-	    document.getElementById('editcode_trigger').nextElementSibling.style.display = 'none';
-	    document.getElementById('difftab_trigger').style.display = '';
-	    document.getElementById('difftab_trigger').nextElementSibling.style.display = '';
-	    document.getElementById('email_trigger').style.display = 'none';
-	    document.getElementById('email_trigger').nextElementSibling.style.display = 'none';
-	    document.getElementById('download_trigger').style.display = '';
-	    document.getElementById('download_trigger').nextElementSibling.style.display = '';
+	    editcode_t.style.display = 'none';
+	    editcode_t.nextElementSibling.style.display = 'none';
+	    difftab_t.style.display = '';
+	    difftab_t.nextElementSibling.style.display = '';
+	    email_t.style.display = 'none';
+	    email_t.nextElementSibling.style.display = 'none';
+	    download_t.style.display = '';
+	    download_t.nextElementSibling.style.display = '';
 	    break;
 	case 'diff':
-	    document.getElementById('editcode_trigger').style.display = '';
-	    document.getElementById('editcode_trigger').nextElementSibling.style.display = '';
-	    document.getElementById('difftab_trigger').style.display = 'none';
-	    document.getElementById('difftab_trigger').nextElementSibling.style.display = 'none';
-	    document.getElementById('email_trigger').style.display = '';
-	    document.getElementById('email_trigger').textContent = 'email as patch';
-	    document.getElementById('email_trigger').onclick = function() {
+	    editcode_t.style.display = '';
+	    editcode_t.nextElementSibling.style.display = '';
+	    difftab_t.style.display = 'none';
+	    difftab_t.nextElementSibling.style.display = 'none';
+	    email_t.style.display = '';
+	    email_t.textContent = 'email as patch';
+	    email_t.onclick = function() {
 		emailPatch(getCode());
 	    }
-	    document.getElementById('email_trigger').nextElementSibling.style.display = '';
-	    document.getElementById('download_trigger').style.display = 'none';
-	    document.getElementById('download_trigger').nextElementSibling.style.display = 'none';
+	    email_t.nextElementSibling.style.display = '';
+	    download_t.style.display = 'none';
+	    download_t.nextElementSibling.style.display = 'none';
 	    break;
     }
     repositionInfoBox();
