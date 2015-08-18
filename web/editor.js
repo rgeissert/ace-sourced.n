@@ -378,7 +378,7 @@ function initEditorElements() {
     editlink.parentElement.insertBefore(separator, editlink.nextElementSibling);
 
     var difftab = document.createElement('a');
-    difftab.textContent = 'diff edits';
+    difftab.textContent = 'diff edit';
     difftab.onclick = function() {
 	openDiffDocument(generatePatch(), 'edits');
     }
