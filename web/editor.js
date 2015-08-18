@@ -367,7 +367,7 @@ function initEditorElements() {
     editlink.download = getFilePath() + '.patch';
 
     email = document.createElement('a');
-    email.textContent = 'email patch';
+    email.textContent = 'email as patch';
     email.onclick = function() {
 	emailPatch(getCode());
     }
@@ -453,7 +453,6 @@ function updateLinksView(view) {
 	    difftab_t.style.display = 'none';
 	    difftab_t.nextElementSibling.style.display = 'none';
 	    email_t.style.display = '';
-	    email_t.textContent = 'email as patch';
 	    email_t.nextElementSibling.style.display = '';
 	    download_t.style.display = 'none';
 	    download_t.nextElementSibling.style.display = 'none';
