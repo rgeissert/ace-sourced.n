@@ -368,7 +368,9 @@ function initEditorElements() {
 
     email = document.createElement('a');
     email.textContent = 'email patch';
-    email.onclick = emailPatch;
+    email.onclick = function() {
+	emailPatch(getCode());
+    }
     email.id = 'email_trigger';
     email.href = '#';
     editlink.parentElement.insertBefore(email, editlink.nextElementSibling);
@@ -452,9 +454,6 @@ function updateLinksView(view) {
 	    difftab_t.nextElementSibling.style.display = 'none';
 	    email_t.style.display = '';
 	    email_t.textContent = 'email as patch';
-	    email_t.onclick = function() {
-		emailPatch(getCode());
-	    }
 	    email_t.nextElementSibling.style.display = '';
 	    download_t.style.display = 'none';
 	    download_t.nextElementSibling.style.display = 'none';
