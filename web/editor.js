@@ -363,7 +363,7 @@ function initEditorElements() {
     var editlink = document.getElementById('editcode_trigger');
     editlink.textContent = 'save as patch';
     editlink.href = '#';
-    editlink.onclick = downloadPatch;
+    editlink.onclick = downloadContent;
     editlink.download = getFilePath() + '.patch';
 
     email = document.createElement('a');
@@ -400,7 +400,7 @@ function initEditorElements() {
     if (dl_el != null) {
 	dl_el.href = '#';
 	dl_el.id = 'download_trigger';
-	dl_el.onclick = downloadCode;
+	dl_el.onclick = downloadContent;
 	dl_el.textContent = 'download edit';
 	dl_el.download = getFilePath().split(/\//).pop();
 	// FIXME: when displaying a diff, adjust the file name
@@ -508,17 +508,7 @@ function emailPatch(patch) {
     return false;
 }
 
-function downloadPatch(e) {
-    var patch = generatePatch();
-    var payload;
-
-    payload = 'data:application/octet-stream,' + encodeURIComponent(patch);
-
-    e.currentTarget.href = payload;
-    return true;
-}
-
-function downloadCode(e) {
+function downloadContent(e) {
     var code = getCode();
     var payload;
 
